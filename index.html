@@ -1,413 +1,458 @@
-<!DOCTYPE html>
-<html class="light" lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Modern Contract Calculator Dashboard</title>
-    <link href="https://fonts.googleapis.com" rel="preconnect" />
-    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-      rel="stylesheet"
-    />
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script>
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              primary: "#5112A8",
-              secondary: "#E61571",
-              "background-light": "#F8F9FA",
-              "background-dark": "#121212",
-              "card-light": "#FFFFFF",
-              "card-dark": "#1E1E1E",
-            },
-            fontFamily: {
-              display: ["Inter", "sans-serif"],
-              sans: ["Inter", "sans-serif"],
-            },
-            borderRadius: {
-              DEFAULT: "0.75rem",
-            },
-          },
-        },
-      };
-    </script>
-    <style type="text/tailwindcss">
-      body {
-        font-family: "Inter", sans-serif;
-      }
-      input::-webkit-outer-spin-button,
-      input::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-      }
-      input[type='number'] {
-        -moz-appearance: textfield;
-      }
-    </style>
-  </head>
-  <body
-    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-200"
-  >
-    <div class="max-w-6xl mx-auto px-4 py-8 lg:py-12">
-      <header
-        class="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4"
-      >
-        <div class="flex items-center gap-4">
-          <div
-            class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white shadow-lg shadow-primary/20"
-          >
-            <span class="material-symbols-outlined">calculate</span>
-          </div>
-          <div>
-            <h1 class="text-3xl font-bold tracking-tight text-primary">
-              Contract Calculator
-            </h1>
-            <p class="text-slate-500 dark:text-slate-400 font-medium">
-              Compare SIM-only vs. Phone contracts easily
-            </p>
-          </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <button
-            class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
-            onclick="toggleDarkMode()"
-          >
-            <span
-              class="material-symbols-outlined text-slate-600 dark:text-slate-300"
-              id="theme-icon"
-              >dark_mode</span
-            >
-          </button>
-        </div>
-      </header>
-      <main class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <section
-          class="bg-card-light dark:bg-card-dark p-8 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 transition-all"
-        >
-          <div class="flex items-center gap-3 mb-6">
-            <span class="material-symbols-outlined text-primary">sim_card</span>
-            <h2 class="text-xl font-bold">SIM Only (24 Months)</h2>
-          </div>
-          <div class="space-y-6">
-            <div>
-              <label
-                class="block text-sm font-semibold mb-2 text-slate-600 dark:text-slate-400"
-                >SIM Per Month (£)</label
-              >
-              <div class="relative">
-                <span
-                  class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400"
-                  >£</span
-                >
-                <input
-                  class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border-transparent focus:ring-2 focus:ring-primary focus:border-transparent rounded-xl font-medium transition-all"
-                  id="sim-monthly"
-                  oninput="calculate()"
-                  step="0.01"
-                  type="number"
-                  value="0.00"
-                />
-              </div>
-            </div>
-            <div>
-              <label
-                class="block text-sm font-semibold mb-2 text-slate-600 dark:text-slate-400"
-                >Handset Outright Cost (£)</label
-              >
-              <div class="relative">
-                <span
-                  class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400"
-                  >£</span
-                >
-                <input
-                  class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border-transparent focus:ring-2 focus:ring-primary focus:border-transparent rounded-xl font-medium transition-all"
-                  id="sim-handset"
-                  oninput="calculate()"
-                  step="0.01"
-                  type="number"
-                  value="0.00"
-                />
-              </div>
-            </div>
-            <div
-              class="pt-6 border-t border-slate-100 dark:border-slate-800 space-y-3"
-            >
-              <div class="flex justify-between items-center text-slate-500">
-                <span>Total (24 Months)</span>
-                <span
-                  class="font-bold text-slate-900 dark:text-white"
-                  id="sim-total-display"
-                  >£0.00</span
-                >
-              </div>
-              <div class="flex justify-between items-center text-slate-500">
-                <span>Effective Monthly Cost</span>
-                <span
-                  class="font-bold text-slate-900 dark:text-white"
-                  id="sim-effective-display"
-                  >£0.00</span
-                >
-              </div>
-            </div>
-          </div>
-        </section>
-        <section
-          class="bg-card-light dark:bg-card-dark p-8 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 transition-all"
-        >
-          <div class="flex items-center gap-3 mb-6">
-            <span class="material-symbols-outlined text-secondary"
-              >phone_iphone</span
-            >
-            <h2 class="text-xl font-bold">24 Month Contract</h2>
-          </div>
-          <div class="space-y-4">
-            <div>
-              <label
-                class="block text-sm font-semibold mb-2 text-slate-600 dark:text-slate-400"
-                >Initial Monthly Cost (£)</label
-              >
-              <div class="relative">
-                <span
-                  class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400"
-                  >£</span
-                >
-                <input
-                  class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border-transparent focus:ring-2 focus:ring-secondary focus:border-transparent rounded-xl font-medium transition-all"
-                  id="contract-monthly"
-                  oninput="calculate()"
-                  step="0.01"
-                  type="number"
-                  value="0.00"
-                />
-              </div>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label
-                  class="block text-xs font-bold mb-1.5 uppercase tracking-wider text-slate-500"
-                  >Price from April 2026 (£)</label
-                >
-                <div class="relative">
-                  <span
-                    class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm"
-                    >£</span
-                  >
-                  <input
-                    class="w-full pl-8 pr-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 border-transparent focus:ring-2 focus:ring-secondary focus:border-transparent rounded-xl font-medium transition-all text-sm"
-                    id="contract-2026"
-                    oninput="calculate()"
-                    step="0.01"
-                    type="number"
-                    value="0.00"
-                  />
-                </div>
-              </div>
-              <div>
-                <label
-                  class="block text-xs font-bold mb-1.5 uppercase tracking-wider text-slate-500"
-                  >Price from April 2027 (£)</label
-                >
-                <div class="relative">
-                  <span
-                    class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm"
-                    >£</span
-                  >
-                  <input
-                    class="w-full pl-8 pr-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 border-transparent focus:ring-2 focus:ring-secondary focus:border-transparent rounded-xl font-medium transition-all text-sm"
-                    id="contract-2027"
-                    oninput="calculate()"
-                    step="0.01"
-                    type="number"
-                    value="0.00"
-                  />
-                </div>
-              </div>
-            </div>
-            <div>
-              <label
-                class="block text-sm font-semibold mb-2 text-slate-600 dark:text-slate-400"
-                >Upfront Cost (£)</label
-              >
-              <div class="relative">
-                <span
-                  class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400"
-                  >£</span
-                >
-                <input
-                  class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border-transparent focus:ring-2 focus:ring-secondary focus:border-transparent rounded-xl font-medium transition-all"
-                  id="contract-upfront"
-                  oninput="calculate()"
-                  step="0.01"
-                  type="number"
-                  value="0.00"
-                />
-              </div>
-            </div>
-            <div
-              class="pt-6 border-t border-slate-100 dark:border-slate-800 space-y-3"
-            >
-              <div class="flex justify-between items-center text-slate-500">
-                <span>Total (24 Months)</span>
-                <span
-                  class="font-bold text-slate-900 dark:text-white"
-                  id="contract-total-display"
-                  >£0.00</span
-                >
-              </div>
-              <div class="flex justify-between items-center text-slate-500">
-                <span>Effective Monthly Cost</span>
-                <span
-                  class="font-bold text-slate-900 dark:text-white"
-                  id="contract-effective-display"
-                  >£0.00</span
-                >
-              </div>
-            </div>
-          </div>
-        </section>
-        <section
-          class="lg:col-span-2 bg-gradient-to-br from-primary to-primary/90 p-8 rounded-2xl shadow-2xl text-white overflow-hidden relative"
-        >
-          <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
-            <span class="material-symbols-outlined text-[200px]">savings</span>
-          </div>
-          <div class="relative z-10">
-            <div class="flex items-center gap-3 mb-8">
-              <span class="material-symbols-outlined">insights</span>
-              <h2 class="text-2xl font-bold">Comparison Results</h2>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div
-                class="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20"
-              >
-                <p
-                  class="text-white/70 text-sm font-semibold mb-1 uppercase tracking-wider"
-                >
-                  Total 24-Month Saving
-                </p>
-                <p class="text-4xl font-black" id="total-saving-display">£0.00</p>
-              </div>
-              <div
-                class="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20"
-              >
-                <p
-                  class="text-white/70 text-sm font-semibold mb-1 uppercase tracking-wider"
-                >
-                  Average Monthly Saving
-                </p>
-                <p class="text-4xl font-black" id="monthly-saving-display">
-                  £0.00
-                </p>
-              </div>
-            </div>
-            <div class="mt-8 flex flex-col sm:flex-row gap-4">
-              <button
-                class="flex-1 bg-secondary hover:bg-secondary/90 text-white py-4 px-6 rounded-xl font-bold text-lg shadow-lg hover:shadow-secondary/20 transition-all flex items-center justify-center gap-2"
-                onclick="calculate()"
-              >
-                <span class="material-symbols-outlined">refresh</span>
-                Calculate
-              </button>
-              <button
-                class="flex-1 bg-white/20 hover:bg-white/30 text-white py-4 px-6 rounded-xl font-bold text-lg backdrop-blur-sm transition-all flex items-center justify-center gap-2"
-                onclick="resetAll()"
-              >
-                <span class="material-symbols-outlined">restart_alt</span>
-                Reset All
-              </button>
-            </div>
-            <div
-              class="mt-6 text-center text-white/90 font-medium py-3 px-4 rounded-lg bg-black/10 border border-white/5 hidden"
-              id="verdict-box"
-            >
-              <span id="verdict-text"></span>
-            </div>
-          </div>
-        </section>
-      </main>
-      <footer class="mt-12 text-center text-slate-500 dark:text-slate-400 text-sm">
-        <p>© 2024 Contract Calculator Dashboard • Built with Precision</p>
-      </footer>
-    </div>
-    <script>
-      function toggleDarkMode() {
-        const html = document.documentElement;
-        const icon = document.getElementById("theme-icon");
-        if (html.classList.contains("dark")) {
-          html.classList.remove("dark");
-          icon.textContent = "dark_mode";
-        } else {
-          html.classList.add("dark");
-          icon.textContent = "light_mode";
-        }
-      }
-      function calculate() {
-        const simMonthly = parseFloat(document.getElementById("sim-monthly").value) || 0;
-        const simHandset = parseFloat(document.getElementById("sim-handset").value) || 0;
-        const contractMonthly =
-          parseFloat(document.getElementById("contract-monthly").value) || 0;
-        const contract2026 =
-          parseFloat(document.getElementById("contract-2026").value) ||
-          contractMonthly;
-        const contract2027 =
-          parseFloat(document.getElementById("contract-2027").value) || contract2026;
-        const contractUpfront =
-          parseFloat(document.getElementById("contract-upfront").value) || 0;
-
-        const simTotal = simMonthly * 24 + simHandset;
-        const simEffective = simTotal / 24;
-        const contractTotal =
-          contractMonthly * 12 + contract2026 * 12 + contractUpfront;
-        const contractEffective = contractTotal / 24;
-        const totalSaving = contractTotal - simTotal;
-        const monthlySaving = totalSaving / 24;
-
-        document.getElementById("sim-total-display").textContent = `£${simTotal.toFixed(
-          2
-        )}`;
-        document.getElementById("sim-effective-display").textContent = `£${simEffective.toFixed(
-          2
-        )}`;
-        document.getElementById("contract-total-display").textContent = `£${contractTotal.toFixed(
-          2
-        )}`;
-        document.getElementById(
-          "contract-effective-display"
-        ).textContent = `£${contractEffective.toFixed(2)}`;
-
-        const savingDisplay = document.getElementById("total-saving-display");
-        const monthlyDisplay = document.getElementById("monthly-saving-display");
-        const verdictBox = document.getElementById("verdict-box");
-        const verdictText = document.getElementById("verdict-text");
-
-        savingDisplay.textContent = `£${Math.abs(totalSaving).toFixed(2)}`;
-        monthlyDisplay.textContent = `£${Math.abs(monthlySaving).toFixed(2)}`;
-        if (totalSaving > 0) {
-          verdictBox.classList.remove("hidden");
-          verdictText.textContent = "SIM Only with Outright purchase is cheaper!";
-        } else if (totalSaving < 0) {
-          verdictBox.classList.remove("hidden");
-          verdictText.textContent = "24 Month Contract is cheaper!";
-        } else {
-          verdictBox.classList.add("hidden");
-        }
-      }
-      function resetAll() {
-        const inputs = document.querySelectorAll("input");
-        inputs.forEach((input) => {
-          input.value = "0.00";
-        });
-        calculate();
-      }
-      calculate();
-    </script>
-  </body>
-</html>
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
+diff --git a/README.md b/README.md
+index ad33685c4c933c64b62dfa4801d004ce8844b238..632aa9c5b9cd7c206dbd58b29a411bcccda759de 100644
+--- a/README.md
++++ b/README.md
+@@ -1 +1,10 @@
+-# currys
+\ No newline at end of file
++# currys
++
++## Run locally
++- Start a simple static server from the repo root:
++  - `python -m http.server 8000`
++- Open the page in your browser:
++  - `http://127.0.0.1:8000/index.html`
++
++## Notes
++- The calculator is a standalone static HTML file (`index.html`), so any static server works.
+diff --git a/index.html b/index.html
+new file mode 100644
+index 0000000000000000000000000000000000000000..a55e97bb09177bd932caab44916263455c2030a2
+--- /dev/null
++++ b/index.html
+@@ -0,0 +1,431 @@
++<!DOCTYPE html>
++<html class="light" lang="en">
++  <head>
++    <meta charset="utf-8" />
++    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
++    <title>Modern Contract Calculator Dashboard</title>
++    <link href="https://fonts.googleapis.com" rel="preconnect" />
++    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
++    <link
++      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
++      rel="stylesheet"
++    />
++    <link
++      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
++      rel="stylesheet"
++    />
++    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
++    <script>
++      tailwind.config = {
++        darkMode: "class",
++        theme: {
++          extend: {
++            colors: {
++              primary: "#5112A8",
++              secondary: "#E61571",
++              "background-light": "#F8F9FA",
++              "background-dark": "#121212",
++              "card-light": "#FFFFFF",
++              "card-dark": "#1E1E1E",
++            },
++            fontFamily: {
++              display: ["Inter", "sans-serif"],
++              sans: ["Inter", "sans-serif"],
++            },
++            borderRadius: {
++              DEFAULT: "0.75rem",
++            },
++          },
++        },
++      };
++    </script>
++    <style type="text/tailwindcss">
++      body {
++        font-family: "Inter", sans-serif;
++      }
++      input::-webkit-outer-spin-button,
++      input::-webkit-inner-spin-button {
++        -webkit-appearance: none;
++        margin: 0;
++      }
++      input[type='number'] {
++        -moz-appearance: textfield;
++      }
++    </style>
++  </head>
++  <body
++    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-200"
++  >
++    <div class="max-w-6xl mx-auto px-4 py-6 sm:py-8 lg:py-12">
++      <header
++        class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between mb-8 sm:mb-10"
++      >
++        <div class="flex items-center gap-4">
++          <div class="w-11 h-11 sm:w-12 sm:h-12">
++            <svg
++              class="w-full h-full drop-shadow-lg"
++              viewBox="0 0 100 100"
++              role="img"
++              aria-label="Currys logo"
++            >
++              <circle cx="50" cy="50" r="50" fill="#4c1d95" />
++              <text
++                x="50"
++                y="58"
++                text-anchor="middle"
++                font-size="36"
++                font-family="Inter, sans-serif"
++                font-weight="700"
++                fill="#ffffff"
++              >
++                currys
++              </text>
++            </svg>
++          </div>
++          <div>
++            <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-primary">
++              Contract Calculator
++            </h1>
++            <p class="text-slate-500 dark:text-slate-400 font-medium">
++              Compare SIM-only vs. Phone contracts easily
++            </p>
++          </div>
++        </div>
++        <div class="flex items-center gap-2">
++          <button
++            class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
++            onclick="toggleDarkMode()"
++          >
++            <span
++              class="material-symbols-outlined text-slate-600 dark:text-slate-300"
++              id="theme-icon"
++              >dark_mode</span
++            >
++          </button>
++        </div>
++      </header>
++      <main class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
++        <section
++          class="bg-card-light dark:bg-card-dark p-6 sm:p-8 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 transition-all"
++        >
++          <div class="flex items-center gap-3 mb-6">
++            <span class="material-symbols-outlined text-primary">sim_card</span>
++            <h2 class="text-lg sm:text-xl font-bold">SIM Only (24 Months)</h2>
++          </div>
++          <div class="space-y-6">
++            <div>
++              <label
++                class="block text-sm font-semibold mb-2 text-slate-600 dark:text-slate-400"
++                >SIM Per Month (£)</label
++              >
++              <div class="relative">
++                <span
++                  class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400"
++                  >£</span
++                >
++                <input
++                  class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border-transparent focus:ring-2 focus:ring-primary focus:border-transparent rounded-xl font-medium transition-all"
++                  id="sim-monthly"
++                  oninput="calculate()"
++                  step="0.01"
++                  type="number"
++                  value="0.00"
++                />
++              </div>
++            </div>
++            <div>
++              <label
++                class="block text-sm font-semibold mb-2 text-slate-600 dark:text-slate-400"
++                >Handset Outright Cost (£)</label
++              >
++              <div class="relative">
++                <span
++                  class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400"
++                  >£</span
++                >
++                <input
++                  class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border-transparent focus:ring-2 focus:ring-primary focus:border-transparent rounded-xl font-medium transition-all"
++                  id="sim-handset"
++                  oninput="calculate()"
++                  step="0.01"
++                  type="number"
++                  value="0.00"
++                />
++              </div>
++            </div>
++            <div
++              class="pt-6 border-t border-slate-100 dark:border-slate-800 space-y-3"
++            >
++              <div class="flex justify-between items-center text-slate-500">
++                <span>Total (24 Months)</span>
++                <span
++                  class="font-bold text-slate-900 dark:text-white"
++                  id="sim-total-display"
++                  >£0.00</span
++                >
++              </div>
++              <div class="flex justify-between items-center text-slate-500">
++                <span>Effective Monthly Cost</span>
++                <span
++                  class="font-bold text-slate-900 dark:text-white"
++                  id="sim-effective-display"
++                  >£0.00</span
++                >
++              </div>
++            </div>
++          </div>
++        </section>
++        <section
++          class="bg-card-light dark:bg-card-dark p-6 sm:p-8 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 transition-all"
++        >
++          <div class="flex items-center gap-3 mb-6">
++            <span class="material-symbols-outlined text-secondary"
++              >phone_iphone</span
++            >
++            <h2 class="text-lg sm:text-xl font-bold">24 Month Contract</h2>
++          </div>
++          <div class="space-y-4">
++            <div>
++              <label
++                class="block text-sm font-semibold mb-2 text-slate-600 dark:text-slate-400"
++                >Initial Monthly Cost (£)</label
++              >
++              <div class="relative">
++                <span
++                  class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400"
++                  >£</span
++                >
++                <input
++                  class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border-transparent focus:ring-2 focus:ring-secondary focus:border-transparent rounded-xl font-medium transition-all"
++                  id="contract-monthly"
++                  oninput="calculate()"
++                  step="0.01"
++                  type="number"
++                  value="0.00"
++                />
++              </div>
++            </div>
++            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
++              <div>
++                <label
++                  class="block text-xs font-bold mb-1.5 uppercase tracking-wider text-slate-500"
++                  >Price from April 2026 (£)</label
++                >
++                <div class="relative">
++                  <span
++                    class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm"
++                    >£</span
++                  >
++                  <input
++                    class="w-full pl-8 pr-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 border-transparent focus:ring-2 focus:ring-secondary focus:border-transparent rounded-xl font-medium transition-all text-sm"
++                    id="contract-2026"
++                    oninput="calculate()"
++                    step="0.01"
++                    type="number"
++                    value="0.00"
++                  />
++                </div>
++              </div>
++              <div>
++                <label
++                  class="block text-xs font-bold mb-1.5 uppercase tracking-wider text-slate-500"
++                  >Price from April 2027 (£)</label
++                >
++                <div class="relative">
++                  <span
++                    class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm"
++                    >£</span
++                  >
++                  <input
++                    class="w-full pl-8 pr-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 border-transparent focus:ring-2 focus:ring-secondary focus:border-transparent rounded-xl font-medium transition-all text-sm"
++                    id="contract-2027"
++                    oninput="calculate()"
++                    step="0.01"
++                    type="number"
++                    value="0.00"
++                  />
++                </div>
++              </div>
++            </div>
++            <div>
++              <label
++                class="block text-sm font-semibold mb-2 text-slate-600 dark:text-slate-400"
++                >Upfront Cost (£)</label
++              >
++              <div class="relative">
++                <span
++                  class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400"
++                  >£</span
++                >
++                <input
++                  class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border-transparent focus:ring-2 focus:ring-secondary focus:border-transparent rounded-xl font-medium transition-all"
++                  id="contract-upfront"
++                  oninput="calculate()"
++                  step="0.01"
++                  type="number"
++                  value="0.00"
++                />
++              </div>
++            </div>
++            <div
++              class="pt-6 border-t border-slate-100 dark:border-slate-800 space-y-3"
++            >
++              <div class="flex justify-between items-center text-slate-500">
++                <span>Total (24 Months)</span>
++                <span
++                  class="font-bold text-slate-900 dark:text-white"
++                  id="contract-total-display"
++                  >£0.00</span
++                >
++              </div>
++              <div class="flex justify-between items-center text-slate-500">
++                <span>Effective Monthly Cost</span>
++                <span
++                  class="font-bold text-slate-900 dark:text-white"
++                  id="contract-effective-display"
++                  >£0.00</span
++                >
++              </div>
++            </div>
++          </div>
++        </section>
++        <section
++          class="lg:col-span-2 bg-gradient-to-br from-primary to-primary/90 p-6 sm:p-8 rounded-2xl shadow-2xl text-white overflow-hidden relative"
++        >
++          <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
++            <span class="material-symbols-outlined text-[200px]">savings</span>
++          </div>
++          <div class="relative z-10">
++            <div class="flex items-center gap-3 mb-8">
++              <span class="material-symbols-outlined">insights</span>
++              <h2 class="text-2xl font-bold">Comparison Results</h2>
++            </div>
++            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
++              <div
++                class="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20"
++              >
++                <p
++                  class="text-white/70 text-sm font-semibold mb-1 uppercase tracking-wider"
++                >
++                  Total 24-Month Saving
++                </p>
++                <p class="text-3xl sm:text-4xl font-black" id="total-saving-display">
++                  £0.00
++                </p>
++              </div>
++              <div
++                class="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20"
++              >
++                <p
++                  class="text-white/70 text-sm font-semibold mb-1 uppercase tracking-wider"
++                >
++                  Average Monthly Saving
++                </p>
++                <p class="text-3xl sm:text-4xl font-black" id="monthly-saving-display">
++                  £0.00
++                </p>
++              </div>
++            </div>
++            <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
++              <button
++                class="bg-secondary hover:bg-secondary/90 text-white py-3.5 sm:py-4 px-6 rounded-xl font-bold text-base sm:text-lg shadow-lg hover:shadow-secondary/20 transition-all flex items-center justify-center gap-2"
++                onclick="calculate()"
++              >
++                <span class="material-symbols-outlined">refresh</span>
++                Calculate
++              </button>
++              <button
++                class="bg-white/20 hover:bg-white/30 text-white py-3.5 sm:py-4 px-6 rounded-xl font-bold text-base sm:text-lg backdrop-blur-sm transition-all flex items-center justify-center gap-2"
++                onclick="resetAll()"
++              >
++                <span class="material-symbols-outlined">restart_alt</span>
++                Reset All
++              </button>
++            </div>
++            <div
++              class="mt-6 text-center text-white/90 font-medium py-3 px-4 rounded-lg bg-black/10 border border-white/5 hidden"
++              id="verdict-box"
++            >
++              <span id="verdict-text"></span>
++            </div>
++          </div>
++        </section>
++      </main>
++      <footer class="mt-12 text-center text-slate-500 dark:text-slate-400 text-sm">
++        <p>© 2024 Contract Calculator Dashboard • Built with Precision</p>
++      </footer>
++    </div>
++    <script>
++      function toggleDarkMode() {
++        const html = document.documentElement;
++        const icon = document.getElementById("theme-icon");
++        if (html.classList.contains("dark")) {
++          html.classList.remove("dark");
++          icon.textContent = "dark_mode";
++        } else {
++          html.classList.add("dark");
++          icon.textContent = "light_mode";
++        }
++      }
++      function calculate() {
++        const simMonthly = parseFloat(document.getElementById("sim-monthly").value) || 0;
++        const simHandset = parseFloat(document.getElementById("sim-handset").value) || 0;
++        const contractMonthly =
++          parseFloat(document.getElementById("contract-monthly").value) || 0;
++        const contract2026 =
++          parseFloat(document.getElementById("contract-2026").value) ||
++          contractMonthly;
++        const contract2027 =
++          parseFloat(document.getElementById("contract-2027").value) || contract2026;
++        const contractUpfront =
++          parseFloat(document.getElementById("contract-upfront").value) || 0;
++
++        const simTotal = simMonthly * 24 + simHandset;
++        const simEffective = simTotal / 24;
++        const contractTotal =
++          contractMonthly * 12 + contract2026 * 12 + contractUpfront;
++        const contractEffective = contractTotal / 24;
++        const totalSaving = contractTotal - simTotal;
++        const monthlySaving = totalSaving / 24;
++
++        document.getElementById("sim-total-display").textContent = `£${simTotal.toFixed(
++          2
++        )}`;
++        document.getElementById("sim-effective-display").textContent = `£${simEffective.toFixed(
++          2
++        )}`;
++        document.getElementById("contract-total-display").textContent = `£${contractTotal.toFixed(
++          2
++        )}`;
++        document.getElementById(
++          "contract-effective-display"
++        ).textContent = `£${contractEffective.toFixed(2)}`;
++
++        const savingDisplay = document.getElementById("total-saving-display");
++        const monthlyDisplay = document.getElementById("monthly-saving-display");
++        const verdictBox = document.getElementById("verdict-box");
++        const verdictText = document.getElementById("verdict-text");
++
++        savingDisplay.textContent = `£${Math.abs(totalSaving).toFixed(2)}`;
++        monthlyDisplay.textContent = `£${Math.abs(monthlySaving).toFixed(2)}`;
++        if (totalSaving > 0) {
++          verdictBox.classList.remove("hidden");
++          verdictText.textContent = "SIM Only with Outright purchase is cheaper!";
++        } else if (totalSaving < 0) {
++          verdictBox.classList.remove("hidden");
++          verdictText.textContent = "24 Month Contract is cheaper!";
++        } else {
++          verdictBox.classList.add("hidden");
++        }
++      }
++      function resetAll() {
++        const inputs = document.querySelectorAll("input");
++        inputs.forEach((input) => {
++          input.value = "0.00";
++        });
++        calculate();
++      }
++      calculate();
++    </script>
++  </body>
++</html>
+ 
+EOF
+)
